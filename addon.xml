@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.pokemon-tv" name="Pokémon TV" version="0.1.0" provider-name="SyrupThinker, Contributors">
+<addon id="plugin.video.pokemon-tv" name="Pokémon TV" version="0.2.1~beta1" provider-name="SyrupThinker, Contributors">
   <requires>
     <!-- <import addon="xbmc.python" version="3.0.0" /> -->
     <import addon="script.common.plugin.cache" version="2.6.1"/>
@@ -31,8 +31,8 @@
     Initial version.
     </news>
     <assets>
-      <icon>resources/icon.png</icon>
-      <fanart>resources/fanart.jpg</fanart>
+      <icon>icon.png</icon>
+      <fanart>fanart.jpg</fanart>
     </assets>
   </extension>
 </addon>
