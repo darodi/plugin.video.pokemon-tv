@@ -19,6 +19,8 @@ addon_handle = int(sys.argv[1])
 addon = xbmcaddon.Addon()
 args = urllib_parse.parse_qs(sys.argv[2][1:])
 
+KODI_VERSION = float(xbmcaddon.Addon('xbmc.addon').getAddonInfo('version')[:4])
+
 xbmcplugin.setContent(addon_handle, "movies")
 
 PLUGIN_ID = base_url.replace("plugin://","")
@@ -55,6 +57,40 @@ def notBlank(d, k):
 def construct_request(query):
     return base_url + "?" + urllib_parse.urlencode(query)
 
+def item_set_info( line_item, properties ):
+
+    """ line item set info """
+
+    if KODI_VERSION > 19.8:
+        vidtag = line_item.getVideoInfoTag()
+        if properties.get( 'episode' ):
+            vidtag.setEpisode( properties.get( 'episode' ) )
+        if properties.get( 'season' ):
+            vidtag.setSeason( properties.get( 'season' ) )
+        if properties.get( 'sortepisode' ):
+            vidtag.setSortEpisode( properties.get( 'sortepisode' ) )
+        if properties.get( 'plot' ):
+            vidtag.setPlot( properties.get( 'plot' ) )
+        if properties.get( 'plotoutline' ):
+            vidtag.setPlotOutline( properties.get( 'plotoutline' ) )
+        if properties.get( 'episodeguide' ):
+            vidtag.setEpisodeGuide( properties.get( 'episodeguide' ) )
+        if properties.get( 'title' ):
+            vidtag.setTitle( properties.get( 'title' ) )
+        if properties.get( 'sorttitle' ):
+            vidtag.setSortTitle( properties.get( 'sorttitle' ) )
+        if properties.get( 'duration' ):
+            vidtag.setDuration( int( properties.get( 'duration' ) ) )
+        if properties.get( 'mediatype' ):
+            vidtag.setMediaType( properties.get( 'mediatype' ) )
+        if properties.get('premiered'):
+            vidtag.setPremiered( properties.get( 'premiered' ) )
+        if properties.get('rating'):
+            vidtag.setRating( float( properties.get( 'rating' ) ) )
+
+    else:
+        line_item.setInfo('video', properties)
+
 def fetchDb(lang):
     response = urllib.request.urlopen(pktv_api + lang + "/")
     if response.getcode() != 200:
@@ -86,7 +122,7 @@ if mode is None:
         list_item.setArt({
             "icon":MEDIA_URL + media_names[i] + '.jpg',
             "poster":MEDIA_URL + media_names[i] + '.jpg',
-        });
+        })
         callback = construct_request({
             "mode": "channels",
             "type": variant,
@@ -131,7 +167,7 @@ elif mode == "channels":
             "icon":channel["channel_images"]["dashboard_image_1125_1500"],
             "poster":channel["channel_images"]["dashboard_image_1125_1500"],
             "fanart":channel["channel_images"]["spotlight_image_2048_1152"],
-        });
+        })
         callback = construct_request({
             "mode": "videos",
             "channel": channel["channel_id"],
@@ -182,7 +218,7 @@ elif mode == "videos":
                     metadata["plot"] = video["description"]
                 metadata["rating"] = video["rating"] * 2
 
-                list_item.setInfo("video", metadata)
+                item_set_info( list_item, metadata )
 
                 callback = None
                 if quality == "Low":
